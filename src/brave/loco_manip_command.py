@@ -22,10 +22,10 @@ if TYPE_CHECKING:
   from mjlab.viewer.debug_visualizer import DebugVisualizer
 
 
-class UniformLocoManipCommand(CommandTerm):
-  cfg: UniformLocoManipCommandCfg
+class UniformVelocityCommand(CommandTerm):
+  cfg: UniformVelocityCommandCfg
 
-  def __init__(self, cfg: UniformLocoManipCommandCfg, env: ManagerBasedRlEnv):
+  def __init__(self, cfg: UniformVelocityCommandCfg, env: ManagerBasedRlEnv):
     super().__init__(cfg, env)
 
     if self.cfg.heading_command and self.cfg.ranges.heading is None:
@@ -200,7 +200,7 @@ class UniformLocoManipCommand(CommandTerm):
     self._joystick_get_env_idx = get_env_idx
 
   def compute(self, dt: float, env_ids: torch.Tensor | None = None) -> None:
-    super().compute(dt)
+    super().compute(dt, env_ids)
     if self._joystick_enabled is not None and self._joystick_enabled.value:
       assert self._joystick_get_env_idx is not None
       idx = self._joystick_get_env_idx()
@@ -280,7 +280,7 @@ class UniformLocoManipCommand(CommandTerm):
 
 
 @dataclass(kw_only=True)
-class UniformLocoManipCommandCfg(CommandTermCfg):
+class UniformVelocityCommandCfg(CommandTermCfg):
   entity_name: str
   heading_command: bool = False
   heading_control_stiffness: float = 1.0
@@ -312,12 +312,12 @@ class UniformLocoManipCommandCfg(CommandTermCfg):
 
   viz: VizCfg = field(default_factory=VizCfg)
 
-  def build(self, env: ManagerBasedRlEnv) -> UniformLocoManipCommand:
-    return UniformLocoManipCommand(self, env)
+  def build(self, env: ManagerBasedRlEnv) -> UniformVelocityCommand:
+    return UniformVelocityCommand(self, env)
 
   def __post_init__(self):
     if self.heading_command and self.ranges.heading is None:
       raise ValueError(
-        "The loco-manipulation command has heading commands active (heading_command=True) but "
+        "The velocity command has heading commands active (heading_command=True) but "
         "the `ranges.heading` parameter is set to None."
       )

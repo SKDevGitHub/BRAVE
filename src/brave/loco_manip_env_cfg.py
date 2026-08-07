@@ -1,6 +1,6 @@
-"""Loco-Manipulation task configuration.
+"""Velocity task configuration.
 
-This module provides a factory function to create a base loco-manip task config.
+This module provides a factory function to create a base velocity task config.
 Robot-specific configurations call the factory and customize as needed.
 """
 
@@ -8,6 +8,7 @@ import math
 from dataclasses import replace
 
 from mjlab.envs import ManagerBasedRlEnvCfg
+from mjlab.envs import mdp as envs_mdp
 from mjlab.envs.mdp import dr
 from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.managers.action_manager import ActionTermCfg
@@ -20,33 +21,38 @@ from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.managers.termination_manager import TerminationTermCfg
 from mjlab.scene import SceneCfg
-from mjlab.sensor import TerrainHeightSensorCfg
+from mjlab.sensor import (
+  GridPatternCfg,
+  ObjRef,
+  RayCastSensorCfg,
+  TerrainHeightSensorCfg,
+)
 from mjlab.sim import MujocoCfg, SimulationCfg
 from mjlab.tasks.velocity import mdp
-from .loco_manip_command import UniformLocoManipCommandCfg
+from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
 from mjlab.terrains import TerrainEntityCfg
 from mjlab.terrains.config import ROUGH_TERRAINS_CFG
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.viewer import ViewerConfig
 
 
-def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
+def make_velocity_env_cfg() -> ManagerBasedRlEnvCfg:
   """Create base velocity tracking task configuration."""
 
   ##
   # Sensors
   ##
 
-  # terrain_scan = RayCastSensorCfg(
-  #   name="terrain_scan",
-  #   frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
-  #   ray_alignment="yaw",
-  #   pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
-  #   max_distance=5.0,
-  #   exclude_parent_body=True,
-  #   include_geom_groups=(0,),  # Terrain only.
-  #   debug_vis=True,
-  # )
+  terrain_scan = RayCastSensorCfg(
+    name="terrain_scan",
+    frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
+    ray_alignment="yaw",
+    pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
+    max_distance=5.0,
+    exclude_parent_body=True,
+    include_geom_groups=(0,),  # Terrain only.
+    debug_vis=True,
+  )
 
   foot_height_scan = TerrainHeightSensorCfg(
     name="foot_height_scan",
@@ -96,23 +102,23 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
       func=mdp.generated_commands,
       params={"command_name": "twist"},
     ),
-    # "height_scan": ObservationTermCfg(
-    #   func=envs_mdp.height_scan,
-    #   params={"sensor_name": "terrain_scan"},
-    #   noise=Unoise(n_min=-0.1, n_max=0.1),
-    #   scale=1 / terrain_scan.max_distance,
-    # ),
+    "height_scan": ObservationTermCfg(
+      func=envs_mdp.height_scan,
+      params={"sensor_name": "terrain_scan"},
+      noise=Unoise(n_min=-0.1, n_max=0.1),
+      scale=1 / terrain_scan.max_distance,
+    ),
   }
 
   critic_terms = {
     **actor_terms,
     # Critic sees the true (unbiased) joint positions as privileged information.
     "joint_pos": ObservationTermCfg(func=mdp.joint_pos_rel),
-    # "height_scan": ObservationTermCfg(
-    #   func=envs_mdp.height_scan,
-    #   params={"sensor_name": "terrain_scan"},
-    #   scale=1 / terrain_scan.max_distance,
-    # ),
+    "height_scan": ObservationTermCfg(
+      func=envs_mdp.height_scan,
+      params={"sensor_name": "terrain_scan"},
+      scale=1 / terrain_scan.max_distance,
+    ),
     "foot_height": ObservationTermCfg(
       func=mdp.foot_height,
       params={"sensor_name": "foot_height_scan"},
@@ -172,7 +178,7 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   ##
 
   commands: dict[str, CommandTermCfg] = {
-    "twist": UniformLocoManipCommandCfg(
+    "twist": UniformVelocityCommandCfg(
       entity_name="robot",
       resampling_time_range=(3.0, 8.0),
       rel_standing_envs=0.1,
@@ -181,7 +187,7 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
       heading_command=True,
       heading_control_stiffness=0.5,
       debug_vis=True,
-      ranges=UniformLocoManipCommandCfg.Ranges(
+      ranges=UniformVelocityCommandCfg.Ranges(
         lin_vel_x=(-1.0, 1.0),
         lin_vel_y=(-1.0, 1.0),
         ang_vel_z=(-0.5, 0.5),
@@ -388,10 +394,10 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   ##
 
   curriculum = {
-    # "terrain_levels": CurriculumTermCfg(
-    #   func=mdp.terrain_levels_vel,
-    #   params={"command_name": "twist"},
-    # ),
+    "terrain_levels": CurriculumTermCfg(
+      func=mdp.terrain_levels_vel,
+      params={"command_name": "twist"},
+    ),
     "command_vel": CurriculumTermCfg(
       func=mdp.commands_vel,
       params={
@@ -416,7 +422,7 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         terrain_generator=replace(ROUGH_TERRAINS_CFG),
         max_init_terrain_level=5,
       ),
-      sensors=(foot_height_scan,),
+      sensors=(terrain_scan, foot_height_scan),
       num_envs=1,
       extent=2.0,
     ),
