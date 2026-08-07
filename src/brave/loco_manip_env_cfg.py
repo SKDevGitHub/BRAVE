@@ -8,7 +8,6 @@ import math
 from dataclasses import replace
 
 from mjlab.envs import ManagerBasedRlEnvCfg
-from mjlab.envs import mdp as envs_mdp
 from mjlab.envs.mdp import dr
 from mjlab.envs.mdp.actions import JointPositionActionCfg
 from mjlab.managers.action_manager import ActionTermCfg
@@ -21,6 +20,7 @@ from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.managers.termination_manager import TerminationTermCfg
 from mjlab.scene import SceneCfg
+from mjlab.sensor import TerrainHeightSensorCfg
 from mjlab.sim import MujocoCfg, SimulationCfg
 from mjlab.tasks.velocity import mdp
 from .loco_manip_command import UniformLocoManipCommandCfg
@@ -96,23 +96,23 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
       func=mdp.generated_commands,
       params={"command_name": "twist"},
     ),
-    "height_scan": ObservationTermCfg(
-      func=envs_mdp.height_scan,
-      params={"sensor_name": "terrain_scan"},
-      noise=Unoise(n_min=-0.1, n_max=0.1),
-      scale=1 / terrain_scan.max_distance,
-    ),
+    # "height_scan": ObservationTermCfg(
+    #   func=envs_mdp.height_scan,
+    #   params={"sensor_name": "terrain_scan"},
+    #   noise=Unoise(n_min=-0.1, n_max=0.1),
+    #   scale=1 / terrain_scan.max_distance,
+    # ),
   }
 
   critic_terms = {
     **actor_terms,
     # Critic sees the true (unbiased) joint positions as privileged information.
     "joint_pos": ObservationTermCfg(func=mdp.joint_pos_rel),
-    "height_scan": ObservationTermCfg(
-      func=envs_mdp.height_scan,
-      params={"sensor_name": "terrain_scan"},
-      scale=1 / terrain_scan.max_distance,
-    ),
+    # "height_scan": ObservationTermCfg(
+    #   func=envs_mdp.height_scan,
+    #   params={"sensor_name": "terrain_scan"},
+    #   scale=1 / terrain_scan.max_distance,
+    # ),
     "foot_height": ObservationTermCfg(
       func=mdp.foot_height,
       params={"sensor_name": "foot_height_scan"},
@@ -416,7 +416,7 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         terrain_generator=replace(ROUGH_TERRAINS_CFG),
         max_init_terrain_level=5,
       ),
-      sensors=(terrain_scan, foot_height_scan),
+      sensors=(foot_height_scan),
       num_envs=1,
       extent=2.0,
     ),
