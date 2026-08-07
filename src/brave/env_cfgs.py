@@ -17,7 +17,7 @@ from mjlab.sensor import (
   TerrainHeightSensorCfg,
 )
 from mjlab.tasks.velocity import mdp
-from mjlab.tasks.velocity.mdp import LocoManipCommandCfg
+from .loco_manip_command import LocoManipCommandCfg
 from .loco_manip_env_cfg import make_loco_manip_env_cfg
 
 
