@@ -22,10 +22,10 @@ if TYPE_CHECKING:
   from mjlab.viewer.debug_visualizer import DebugVisualizer
 
 
-class UniformVelocityCommand(CommandTerm):
-  cfg: UniformVelocityCommandCfg
+class LocoManipCommand(CommandTerm):
+  cfg: LocoManipCommandCfg
 
-  def __init__(self, cfg: UniformVelocityCommandCfg, env: ManagerBasedRlEnv):
+  def __init__(self, cfg: LocoManipCommandCfg, env: ManagerBasedRlEnv):
     super().__init__(cfg, env)
 
     if self.cfg.heading_command and self.cfg.ranges.heading is None:
@@ -280,7 +280,7 @@ class UniformVelocityCommand(CommandTerm):
 
 
 @dataclass(kw_only=True)
-class UniformVelocityCommandCfg(CommandTermCfg):
+class LocoManipCommandCfg(CommandTermCfg):
   entity_name: str
   heading_command: bool = False
   heading_control_stiffness: float = 1.0
@@ -312,8 +312,8 @@ class UniformVelocityCommandCfg(CommandTermCfg):
 
   viz: VizCfg = field(default_factory=VizCfg)
 
-  def build(self, env: ManagerBasedRlEnv) -> UniformVelocityCommand:
-    return UniformVelocityCommand(self, env)
+  def build(self, env: ManagerBasedRlEnv) -> LocoManipCommand:
+    return LocoManipCommand(self, env)
 
   def __post_init__(self):
     if self.heading_command and self.ranges.heading is None:
