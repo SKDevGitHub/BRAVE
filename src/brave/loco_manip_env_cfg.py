@@ -29,14 +29,14 @@ from mjlab.sensor import (
 )
 from mjlab.sim import MujocoCfg, SimulationCfg
 from mjlab.tasks.velocity import mdp
-from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
+from .loco_manip_command import UniformLocoManipCommandCfg
 from mjlab.terrains import TerrainEntityCfg
 from mjlab.terrains.config import ROUGH_TERRAINS_CFG
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.viewer import ViewerConfig
 
 
-def make_velocity_env_cfg() -> ManagerBasedRlEnvCfg:
+def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   """Create base velocity tracking task configuration."""
 
   ##
@@ -178,7 +178,7 @@ def make_velocity_env_cfg() -> ManagerBasedRlEnvCfg:
   ##
 
   commands: dict[str, CommandTermCfg] = {
-    "twist": UniformVelocityCommandCfg(
+    "twist": UniformLocoManipCommandCfg(
       entity_name="robot",
       resampling_time_range=(3.0, 8.0),
       rel_standing_envs=0.1,
@@ -187,7 +187,7 @@ def make_velocity_env_cfg() -> ManagerBasedRlEnvCfg:
       heading_command=True,
       heading_control_stiffness=0.5,
       debug_vis=True,
-      ranges=UniformVelocityCommandCfg.Ranges(
+      ranges=UniformLocoManipCommandCfg.Ranges(
         lin_vel_x=(-1.0, 1.0),
         lin_vel_y=(-1.0, 1.0),
         ang_vel_z=(-0.5, 0.5),

@@ -22,10 +22,10 @@ if TYPE_CHECKING:
   from mjlab.viewer.debug_visualizer import DebugVisualizer
 
 
-class UniformVelocityCommand(CommandTerm):
-  cfg: UniformVelocityCommandCfg
+class UniformLocoManipCommand(CommandTerm):
+  cfg: UniformLocoManipCommandCfg
 
-  def __init__(self, cfg: UniformVelocityCommandCfg, env: ManagerBasedRlEnv):
+  def __init__(self, cfg: UniformLocoManipCommandCfg, env: ManagerBasedRlEnv):
     super().__init__(cfg, env)
 
     if self.cfg.heading_command and self.cfg.ranges.heading is None:
@@ -280,7 +280,7 @@ class UniformVelocityCommand(CommandTerm):
 
 
 @dataclass(kw_only=True)
-class UniformVelocityCommandCfg(CommandTermCfg):
+class UniformLocoManipCommandCfg(CommandTermCfg):
   entity_name: str
   heading_command: bool = False
   heading_control_stiffness: float = 1.0
@@ -312,12 +312,12 @@ class UniformVelocityCommandCfg(CommandTermCfg):
 
   viz: VizCfg = field(default_factory=VizCfg)
 
-  def build(self, env: ManagerBasedRlEnv) -> UniformVelocityCommand:
-    return UniformVelocityCommand(self, env)
+  def build(self, env: ManagerBasedRlEnv) -> UniformLocoManipCommand:
+    return UniformLocoManipCommand(self, env)
 
   def __post_init__(self):
     if self.heading_command and self.ranges.heading is None:
       raise ValueError(
-        "The velocity command has heading commands active (heading_command=True) but "
+        "The loco-manipulation command has heading commands active (heading_command=True) but "
         "the `ranges.heading` parameter is set to None."
       )
