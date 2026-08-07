@@ -37,7 +37,7 @@ def unitree_g1_brave_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     num_slots=1,
     history_length=4,
   )
-  cfg.scene.sensors = (cfg.scene.sensors or ()) + (self_collision_cfg)
+  cfg.scene.sensors = (cfg.scene.sensors or ()) + (self_collision_cfg,)
 
   # Assure flat terrain for this setup
   cfg.scene.terrain.terrain_generator.curriculum = False
