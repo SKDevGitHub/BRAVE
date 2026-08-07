@@ -13,7 +13,6 @@ from mjlab.sensor import (
   ContactMatch,
   ContactSensorCfg,
   ObjRef,
-  RayCastSensorCfg,
   RingPatternCfg,
   TerrainHeightSensorCfg,
 )
@@ -33,11 +32,11 @@ def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   cfg.scene.entities = {"robot": get_g1_robot_cfg()}
 
   # Set raycast sensor frame to G1 pelvis.
-  for sensor in cfg.scene.sensors or ():
-    if sensor.name == "terrain_scan":
-      assert isinstance(sensor, RayCastSensorCfg)
-      assert isinstance(sensor.frame, ObjRef)
-      sensor.frame.name = "pelvis"
+  # for sensor in cfg.scene.sensors or ():
+  #   if sensor.name == "terrain_scan":
+  #     assert isinstance(sensor, RayCastSensorCfg)
+  #     assert isinstance(sensor.frame, ObjRef)
+  #     sensor.frame.name = "pelvis"
 
   site_names = ("left_foot", "right_foot")
   geom_names = tuple(
@@ -81,7 +80,7 @@ def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   )
 
   if cfg.scene.terrain is not None and cfg.scene.terrain.terrain_generator is not None:
-    cfg.scene.terrain.terrain_generator.curriculum = True
+    cfg.scene.terrain.terrain_generator.curriculum = False
 
   joint_pos_action = cfg.actions["joint_pos"]
   assert isinstance(joint_pos_action, JointPositionActionCfg)
