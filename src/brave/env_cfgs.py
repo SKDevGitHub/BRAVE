@@ -41,8 +41,6 @@ def unitree_g1_brave_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 
   # Assure flat terrain for this setup
   cfg.scene.terrain.terrain_generator.curriculum = False
-  del cfg.observations["actor"].terms["height_scan"]
-  del cfg.observations["critic"].terms["height_scan"]
   cfg.terminations.pop("out_of_terrain_bounds", None)
   cfg.scene.terrain.terrain_type = "plane"
   cfg.scene.terrain.terrain_generator = None
