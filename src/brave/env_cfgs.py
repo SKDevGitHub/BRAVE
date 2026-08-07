@@ -85,7 +85,7 @@ def unitree_g1_brave_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   assert isinstance(twist_cmd, UniformLocoManipCommandCfg)
   twist_cmd.viz.z_offset = 1.15
 
-  cfg.events["foot_fricion"].params["asset_cfg"].geom_names = geom_names
+  # cfg.events["foot_fricion"].params["asset_cfg"].geom_names = geom_names
   cfg.events["base_com"].params["asset_cfg"].body_names = ("torso_link",)
 
   # Now, specify how rewards introduced in the base velocity env should work
