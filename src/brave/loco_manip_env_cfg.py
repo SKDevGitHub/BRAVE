@@ -43,16 +43,16 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   # Sensors
   ##
 
-  terrain_scan = RayCastSensorCfg(
-    name="terrain_scan",
-    frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
-    ray_alignment="yaw",
-    pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
-    max_distance=5.0,
-    exclude_parent_body=True,
-    include_geom_groups=(0,),  # Terrain only.
-    debug_vis=True,
-  )
+  # terrain_scan = RayCastSensorCfg(
+  #   name="terrain_scan",
+  #   frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
+  #   ray_alignment="yaw",
+  #   pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
+  #   max_distance=5.0,
+  #   exclude_parent_body=True,
+  #   include_geom_groups=(0,),  # Terrain only.
+  #   debug_vis=True,
+  # )
 
   foot_height_scan = TerrainHeightSensorCfg(
     name="foot_height_scan",
@@ -102,23 +102,23 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
       func=mdp.generated_commands,
       params={"command_name": "twist"},
     ),
-    "height_scan": ObservationTermCfg(
-      func=envs_mdp.height_scan,
-      params={"sensor_name": "terrain_scan"},
-      noise=Unoise(n_min=-0.1, n_max=0.1),
-      scale=1 / terrain_scan.max_distance,
-    ),
+    # "height_scan": ObservationTermCfg(
+    #   func=envs_mdp.height_scan,
+    #   params={"sensor_name": "terrain_scan"},
+    #   noise=Unoise(n_min=-0.1, n_max=0.1),
+    #   scale=1 / terrain_scan.max_distance,
+    # ),
   }
 
   critic_terms = {
     **actor_terms,
     # Critic sees the true (unbiased) joint positions as privileged information.
-    "joint_pos": ObservationTermCfg(func=mdp.joint_pos_rel),
-    "height_scan": ObservationTermCfg(
-      func=envs_mdp.height_scan,
-      params={"sensor_name": "terrain_scan"},
-      scale=1 / terrain_scan.max_distance,
-    ),
+    # "joint_pos": ObservationTermCfg(func=mdp.joint_pos_rel),
+    # "height_scan": ObservationTermCfg(
+    #   func=envs_mdp.height_scan,
+    #   params={"sensor_name": "terrain_scan"},
+    #   scale=1 / terrain_scan.max_distance,
+    # ),
     "foot_height": ObservationTermCfg(
       func=mdp.foot_height,
       params={"sensor_name": "foot_height_scan"},
@@ -422,7 +422,7 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         terrain_generator=replace(ROUGH_TERRAINS_CFG),
         max_init_terrain_level=5,
       ),
-      sensors=(terrain_scan, foot_height_scan),
+      sensors=(foot_height_scan,),
       num_envs=1,
       extent=2.0,
     ),
