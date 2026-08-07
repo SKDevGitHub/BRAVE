@@ -22,7 +22,7 @@ from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
 from mjlab.tasks.velocity.velocity_env_cfg import make_velocity_env_cfg
 
 
-def unitree_g1_rough_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
+def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   """Create Unitree G1 rough terrain velocity configuration."""
   cfg = make_velocity_env_cfg()
 
@@ -185,36 +185,38 @@ def unitree_g1_rough_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   return cfg
 
 
-def unitree_g1_flat_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
-  """Create Unitree G1 flat terrain velocity configuration."""
-  cfg = unitree_g1_rough_env_cfg(play=play)
+# def unitree_g1_flat_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
+#   """Create Unitree G1 flat terrain velocity configuration."""
+#   cfg = unitree_g1_rough_env_cfg(play=play)
+#
+#   cfg.sim.njmax = 300
+#   cfg.sim.mujoco.ccd_iterations = 50
+#   cfg.sim.contact_sensor_maxmatch = 64
+#   cfg.sim.nconmax = None
+#
+#   # Switch to flat terrain.
+#   assert cfg.scene.terrain is not None
+#   cfg.scene.terrain.terrain_type = "plane"
+#   cfg.scene.terrain.terrain_generator = None
+#
+#   # Remove raycast sensor and height scan (no terrain to scan).
+#   cfg.scene.sensors = tuple(
+#     s for s in (cfg.scene.sensors or ()) if s.name != "terrain_scan"
+#   )
+#   del cfg.observations["actor"].terms["height_scan"]
+#   del cfg.observations["critic"].terms["height_scan"]
+#
+#   cfg.terminations.pop("out_of_terrain_bounds", None)
+#
+#   # Disable terrain curriculum (not present in play mode since rough clears all).
+#   cfg.curriculum.pop("terrain_levels", None)
+#
+#   if play:
+#     twist_cmd = cfg.commands["twist"]
+#     assert isinstance(twist_cmd, UniformVelocityCommandCfg)
+#     twist_cmd.ranges.lin_vel_x = (-1.5, 2.0)
+#     twist_cmd.ranges.ang_vel_z = (-0.7, 0.7)
+#
+#   return cfg
+#
 
-  cfg.sim.njmax = 300
-  cfg.sim.mujoco.ccd_iterations = 50
-  cfg.sim.contact_sensor_maxmatch = 64
-  cfg.sim.nconmax = None
-
-  # Switch to flat terrain.
-  assert cfg.scene.terrain is not None
-  cfg.scene.terrain.terrain_type = "plane"
-  cfg.scene.terrain.terrain_generator = None
-
-  # Remove raycast sensor and height scan (no terrain to scan).
-  cfg.scene.sensors = tuple(
-    s for s in (cfg.scene.sensors or ()) if s.name != "terrain_scan"
-  )
-  del cfg.observations["actor"].terms["height_scan"]
-  del cfg.observations["critic"].terms["height_scan"]
-
-  cfg.terminations.pop("out_of_terrain_bounds", None)
-
-  # Disable terrain curriculum (not present in play mode since rough clears all).
-  cfg.curriculum.pop("terrain_levels", None)
-
-  if play:
-    twist_cmd = cfg.commands["twist"]
-    assert isinstance(twist_cmd, UniformVelocityCommandCfg)
-    twist_cmd.ranges.lin_vel_x = (-1.5, 2.0)
-    twist_cmd.ranges.ang_vel_z = (-0.7, 0.7)
-
-  return cfg
