@@ -1,4 +1,4 @@
-"""Unitree G1 velocity environment configurations."""
+"""Unitree G1 loco-manipulation environment configurations."""
 
 from mjlab.asset_zoo.robots import (
   G1_ACTION_SCALE,
@@ -19,12 +19,12 @@ from mjlab.sensor import (
 )
 from mjlab.tasks.velocity import mdp
 from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
-from mjlab.tasks.velocity.velocity_env_cfg import make_velocity_env_cfg
+from .loco_manip_env_cfg import make_loco_manip_env_cfg
 
 
 def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
-  """Create Unitree G1 rough terrain velocity configuration."""
-  cfg = make_velocity_env_cfg()
+  """Create Unitree G1 loco-manipulation velocity configuration."""
+  cfg = make_loco_manip_env_cfg()
 
   cfg.sim.mujoco.ccd_iterations = 500
   cfg.sim.contact_sensor_maxmatch = 500

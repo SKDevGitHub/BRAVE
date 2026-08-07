@@ -36,7 +36,7 @@ from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.viewer import ViewerConfig
 
 
-def make_velocity_env_cfg() -> ManagerBasedRlEnvCfg:
+def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   """Create base velocity tracking task configuration."""
 
   ##
