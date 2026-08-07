@@ -10,6 +10,9 @@ from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.sensor import (
   ContactMatch,
   ContactSensorCfg,
+  TerrainHeightSensorCfg,
+  ObjRef,
+  RingPatternCfg
 )
 from mjlab.tasks.velocity.mdp import self_collision_cost
 from .loco_manip_command import UniformLocoManipCommandCfg
@@ -26,8 +29,21 @@ def unitree_g1_brave_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   cfg.sim.nconmax = None
 
   cfg.scene.entities = {"robot": get_g1_robot_cfg()}
-  # No need for foot height scan here, since we're doing flat terrain
-  # However, self-collision detection is necessary
+
+  site_names = ("left_foot", "right_foot")
+  geom_names = tuple(
+    f"{side}_foot{i}_collision" for side in ("left", "right") for i in range(1, 8)
+  )
+
+  # Wire foot height scan to per-foot sites.
+  for sensor in cfg.scene.sensors or ():
+    if sensor.name == "foot_height_scan":
+      assert isinstance(sensor, TerrainHeightSensorCfg)
+      sensor.frame = tuple(
+        ObjRef(type="site", name=s, entity="robot") for s in site_names
+      )
+      sensor.pattern = RingPatternCfg.single_ring(radius=0.03, num_samples=6)
+
   self_collision_cfg = ContactSensorCfg(
     name="self_collision",
     primary=ContactMatch(mode="subtree", pattern="pelvis", entity="robot"),
@@ -69,6 +85,7 @@ def unitree_g1_brave_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   assert isinstance(twist_cmd, UniformLocoManipCommandCfg)
   twist_cmd.viz.z_offset = 1.15
 
+  cfg.events["foot_fricion"].params["asset_cfg"].geom_names = geom_names
   cfg.events["base_com"].params["asset_cfg"].body_names = ("torso_link",)
 
   # Now, specify how rewards introduced in the base velocity env should work

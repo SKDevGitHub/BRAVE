@@ -388,10 +388,10 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   ##
 
   curriculum = {
-    "terrain_levels": CurriculumTermCfg(
-      func=mdp.terrain_levels_vel,
-      params={"command_name": "twist"},
-    ),
+    # "terrain_levels": CurriculumTermCfg(
+    #   func=mdp.terrain_levels_vel,
+    #   params={"command_name": "twist"},
+    # ),
     "command_vel": CurriculumTermCfg(
       func=mdp.commands_vel,
       params={
