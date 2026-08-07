@@ -21,12 +21,6 @@ from mjlab.managers.reward_manager import RewardTermCfg
 from mjlab.managers.scene_entity_config import SceneEntityCfg
 from mjlab.managers.termination_manager import TerminationTermCfg
 from mjlab.scene import SceneCfg
-from mjlab.sensor import (
-  GridPatternCfg,
-  ObjRef,
-  RayCastSensorCfg,
-  TerrainHeightSensorCfg,
-)
 from mjlab.sim import MujocoCfg, SimulationCfg
 from mjlab.tasks.velocity import mdp
 from .loco_manip_command import UniformLocoManipCommandCfg
@@ -43,16 +37,16 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
   # Sensors
   ##
 
-  terrain_scan = RayCastSensorCfg(
-    name="terrain_scan",
-    frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
-    ray_alignment="yaw",
-    pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
-    max_distance=5.0,
-    exclude_parent_body=True,
-    include_geom_groups=(0,),  # Terrain only.
-    debug_vis=True,
-  )
+  # terrain_scan = RayCastSensorCfg(
+  #   name="terrain_scan",
+  #   frame=ObjRef(type="body", name="", entity="robot"),  # Set per-robot.
+  #   ray_alignment="yaw",
+  #   pattern=GridPatternCfg(size=(1.6, 1.0), resolution=0.1),
+  #   max_distance=5.0,
+  #   exclude_parent_body=True,
+  #   include_geom_groups=(0,),  # Terrain only.
+  #   debug_vis=True,
+  # )
 
   foot_height_scan = TerrainHeightSensorCfg(
     name="foot_height_scan",
