@@ -17,7 +17,7 @@ from mjlab.sensor import (
   TerrainHeightSensorCfg,
 )
 from mjlab.tasks.velocity import mdp
-from mjlab.tasks.velocity.mdp import UniformVelocityCommandCfg
+from mjlab.tasks.velocity.mdp import LocoManipCommandCfg
 from .loco_manip_env_cfg import make_loco_manip_env_cfg
 
 
@@ -89,7 +89,7 @@ def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
   cfg.viewer.body_name = "torso_link"
 
   twist_cmd = cfg.commands["twist"]
-  assert isinstance(twist_cmd, UniformVelocityCommandCfg)
+  assert isinstance(twist_cmd, LocoManipCommandCfg)
   twist_cmd.viz.z_offset = 1.15
 
   cfg.events["foot_friction"].params["asset_cfg"].geom_names = geom_names
@@ -212,7 +212,7 @@ def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
 #
 #   if play:
 #     twist_cmd = cfg.commands["twist"]
-#     assert isinstance(twist_cmd, UniformVelocityCommandCfg)
+#     assert isinstance(twist_cmd, LocoManipCommandCfg)
 #     twist_cmd.ranges.lin_vel_x = (-1.5, 2.0)
 #     twist_cmd.ranges.ang_vel_z = (-0.7, 0.7)
 #
