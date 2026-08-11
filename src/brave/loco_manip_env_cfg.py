@@ -1,6 +1,6 @@
-"""Velocity task configuration.
+"""Loco-manip task configuration.
 
-This module provides a factory function to create a base velocity task config.
+This module provides a factory function to create a base loco-manip task config.
 Robot-specific configurations call the factory and customize as needed.
 """
 
@@ -29,6 +29,7 @@ from mjlab.terrains import TerrainEntityCfg
 from mjlab.terrains.config import ROUGH_TERRAINS_CFG
 from mjlab.utils.noise import UniformNoiseCfg as Unoise
 from mjlab.viewer import ViewerConfig
+
 
 
 def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
@@ -233,6 +234,11 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         },
       },
     ),
+    # "apply_force_to_robot": EventTermCfg(
+    #     func=mdp_brave.push_with_force_distribution,
+    #     mode="step",
+    #     params={},
+    # ),
     "foot_friction": EventTermCfg(
       mode="startup",
       func=dr.geom_friction,
