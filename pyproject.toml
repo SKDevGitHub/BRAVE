@@ -11,6 +11,9 @@ dependencies = ["mjlab==1.5.3"]
 [project.entry-points."mjlab.tasks"]
 brave = "brave"
 
+[project.optional-dependencies]
+notebooks = ["jupyter==1.1.1", "matplotlib==3.11.1"]
+
 [build-system]
 requires = ["uv_build"]
 build-backend = "uv_build"
