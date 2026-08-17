@@ -219,21 +219,43 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         "asset_cfg": SceneEntityCfg("robot", joint_names=(".*",)),
       },
     ),
-    "push_robot": EventTermCfg(
-      func=mdp.push_by_setting_velocity,
-      mode="interval",
-      interval_range_s=(1.0, 3.0),
+    # "push_robot": EventTermCfg(
+    #   func=mdp.push_by_setting_velocity,
+    #   mode="interval",
+    #   interval_range_s=(1.0, 3.0),
+    #   params={
+    #     "velocity_range": {
+    #       "x": (-0.5, 0.5),
+    #       "y": (-0.5, 0.5),
+    #       "z": (-0.4, 0.4),
+    #       "roll": (-0.52, 0.52),
+    #       "pitch": (-0.52, 0.52),
+    #       "yaw": (-0.78, 0.78),
+    #     },
+    #   },
+    # ),
+    # Imitate FACET force curriculum: "Constant" forces
+    "push_robot_constant": EventTermCfg(
+      # Not in the docs: forces/torques are randomly sampled/applied per link of the robot armature
+      func=mdp.apply_external_force_torque,
+      mode="reset",
       params={
-        "velocity_range": {
-          "x": (-0.5, 0.5),
-          "y": (-0.5, 0.5),
-          "z": (-0.4, 0.4),
-          "roll": (-0.52, 0.52),
-          "pitch": (-0.52, 0.52),
-          "yaw": (-0.78, 0.78),
-        },
-      },
+        # In FACET, forces constantly-applied across an episode follow uniform distribution
+        # in X, Y, and Z directions, with max force being 40 in X and Y directions and 15
+        # in the Z direction. To roughly match this, we'll match the maximum possible
+        # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
+        # Apply around half of this magnitude via "force"
+        "force_range":(0.0,29.25),
+        # Apply around half of this magnitude via "torque"
+        # Torque is in units of force * distance. In this case, expect the moment arm not to
+        # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
+        "torque_range":(0.0,29.25 * 0.2),
+      }
     ),
+    # Imitate FACET force curriculum: "Impulse" forces
+    # "push_robot_impulse": EventTermCfg()
+    #
+    # BRAVE force curriculum
     # "apply_force_to_robot": EventTermCfg(
     #     func=mdp_brave.push_with_force_distribution,
     #     mode="step",
