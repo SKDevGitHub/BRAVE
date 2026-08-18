@@ -235,25 +235,25 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
     #   },
     # ),
     # Imitate FACET force curriculum: "Constant" forces
-    "push_robot_constant": EventTermCfg(
-      # Not in the docs: forces/torques are randomly sampled/applied per link of the robot armature
-      func=mdp.apply_external_force_torque,
-      mode="reset",
-      params={
-        # In FACET, forces constantly-applied across an episode follow uniform distribution
-        # in X, Y, and Z directions, with max force being 40 in X and Y directions and 15
-        # in the Z direction. To roughly match this, we'll match the maximum possible
-        # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
-        # Apply around half of this magnitude via "force"
-        "force_range":(0.0,29.25),
-        # Apply around half of this magnitude via "torque"
-        # Torque is in units of force * distance. In this case, expect the moment arm not to
-        # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
-        "torque_range":(0.0,29.25 * 0.2),
-        "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
-      }
-    ),
-    # Imitate FACET force curriculum: "Impulse" forces
+    # "push_robot_constant": EventTermCfg(
+    #   # Not in the docs: forces/torques are randomly sampled/applied per link of the robot armature
+    #   func=mdp.apply_external_force_torque,
+    #   mode="reset",
+    #   params={
+    #     # In FACET, forces constantly-applied across an episode follow uniform distribution
+    #     # in X, Y, and Z directions, with max force being 40 in X and Y directions and 15
+    #     # in the Z direction. To roughly match this, we'll match the maximum possible
+    #     # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
+    #     # Apply around half of this magnitude via "force"
+    #     "force_range":(0.0,29.25),
+    #     # Apply around half of this magnitude via "torque"
+    #     # Torque is in units of force * distance. In this case, expect the moment arm not to
+    #     # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
+    #     "torque_range":(0.0,29.25 * 0.2),
+    #     "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
+    #   }
+    # ),
+    # # Imitate FACET force curriculum: "Impulse" forces
     "push_robot_impulse": EventTermCfg(
       func=mdp.apply_body_impulse,
       mode="step",
