@@ -264,8 +264,8 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
           # Halved is (56.6-141.8) N
           # Then force and torque are halved again according to the 0.5 * duration * f_peak calculation
           # Torques are (11.3-28.4) N*m
-          "force_range": (56.6/2,141.8/2),
-          "torque_range": (11.3/2,28.4/2),
+          "force_range": (-((56.6/2)+(141.8/2))/2,((56.6/2)+(141.8/2))/2),
+          "torque_range": (-((11.3/2)+(28.4/2))/2,((11.3/2)+(28.4/2))/2),
           # Durations copied from FACET paper "ramp impulse"
           "duration_s": (0.2,0.3),
           "cooldown_s": (0.2,0.3),
