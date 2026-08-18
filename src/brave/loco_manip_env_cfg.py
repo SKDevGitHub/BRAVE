@@ -254,24 +254,24 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
       }
     ),
     # Imitate FACET force curriculum: "Impulse" forces
-    "push_robot_impulse": EventTermCfg(
-      func=mdp.apply_body_impulse,
-      mode="step",
-      params={
-          # Similar calculation here. FACET forces range: XY: 80-200N, Z: 0-20N
-          # Lower bound on magnitude: sqrt(80*80 + 80*80) ~= 113.2 N
-          # Upper bound on magnitude: sqrt(200*200 + 200*200 + 20*20) ~= 283.5 N
-          # Halved is (56.6-141.8) N
-          # Then force and torque are halved again according to the 0.5 * duration * f_peak calculation
-          # Torques are (11.3-28.4) N*m
-          "force_range": (-((56.6/2)+(141.8/2))/2,((56.6/2)+(141.8/2))/2),
-          "torque_range": (-((11.3/2)+(28.4/2))/2,((11.3/2)+(28.4/2))/2),
-          # Durations copied from FACET paper "ramp impulse"
-          "duration_s": (0.2,0.3),
-          "cooldown_s": (0.2,0.3),
-          "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
-      }
-    ),
+    # "push_robot_impulse": EventTermCfg(
+    #   func=mdp.apply_body_impulse,
+    #   mode="step",
+    #   params={
+    #       # Similar calculation here. FACET forces range: XY: 80-200N, Z: 0-20N
+    #       # Lower bound on magnitude: sqrt(80*80 + 80*80) ~= 113.2 N
+    #       # Upper bound on magnitude: sqrt(200*200 + 200*200 + 20*20) ~= 283.5 N
+    #       # Halved is (56.6-141.8) N
+    #       # Then force and torque are halved again according to the 0.5 * duration * f_peak calculation
+    #       # Torques are (11.3-28.4) N*m
+    #       "force_range": (-((56.6/2)+(141.8/2))/2,((56.6/2)+(141.8/2))/2),
+    #       "torque_range": (-((11.3/2)+(28.4/2))/2,((11.3/2)+(28.4/2))/2),
+    #       # Durations copied from FACET paper "ramp impulse"
+    #       "duration_s": (0.2,0.3),
+    #       "cooldown_s": (0.2,0.3),
+    #       "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
+    #   }
+    # ),
     #
     # BRAVE force curriculum
     # "apply_force_to_robot": EventTermCfg(
