@@ -235,42 +235,42 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
     #   },
     # ),
     # Imitate FACET force curriculum: "Constant" forces
-    # "push_robot_constant": EventTermCfg(
-    #   # Not in the docs: forces/torques are randomly sampled/applied per link of the robot armature
-    #   func=mdp.apply_external_force_torque,
-    #   mode="reset",
-    #   params={
-    #     # In FACET, forces constantly-applied across an episode follow uniform distribution
-    #     # in X, Y, and Z directions, with max force being 40 in X and Y directions and 15
-    #     # in the Z direction. To roughly match this, we'll match the maximum possible
-    #     # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
-    #     # Apply around half of this magnitude via "force"
-    #     "force_range":(0.0,29.25),
-    #     # Apply around half of this magnitude via "torque"
-    #     # Torque is in units of force * distance. In this case, expect the moment arm not to
-    #     # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
-    #     "torque_range":(0.0,29.25 * 0.2),
-    #     "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
-    #   }
-    # ),
-    # # Imitate FACET force curriculum: "Impulse" forces
-    "push_robot_impulse": EventTermCfg(
-      func=mdp.apply_body_impulse,
-      mode="step",
+    "push_robot_constant": EventTermCfg(
+      # Not in the docs: forces/torques are randomly sampled/applied per link of the robot armature
+      func=mdp.apply_external_force_torque,
+      mode="reset",
       params={
-          # Similar calculation here. FACET forces range: XY: 80-200N, Z: 0-20N
-          # Lower bound on magnitude: sqrt(80*80 + 80*80) ~= 113.2 N
-          # Upper bound on magnitude: sqrt(200*200 + 200*200 + 20*20) ~= 283.5 N
-          # Halved is (56.6-141.8) N
-          # Torques are (11.3-28.4) N*m
-          "force_range": (56.6,141.8),
-          "torque_range": (11.3,28.4),
-          # Durations copied from FACET paper "ramp impulse"
-          "duration_s": (0.2,0.3),
-          "cooldown_s": (0.2,0.3),
-          "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
+        # In FACET, forces constantly-applied across an episode follow uniform distribution
+        # in X, Y, and Z directions, with max force being 40 in X and Y directions and 15
+        # in the Z direction. To roughly match this, we'll match the maximum possible
+        # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
+        # Apply around half of this magnitude via "force"
+        "force_range":(0.0,29.25),
+        # Apply around half of this magnitude via "torque"
+        # Torque is in units of force * distance. In this case, expect the moment arm not to
+        # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
+        "torque_range":(0.0,29.25 * 0.2),
+        "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
       }
     ),
+    # Imitate FACET force curriculum: "Impulse" forces
+    # "push_robot_impulse": EventTermCfg(
+    #   func=mdp.apply_body_impulse,
+    #   mode="step",
+    #   params={
+    #       # Similar calculation here. FACET forces range: XY: 80-200N, Z: 0-20N
+    #       # Lower bound on magnitude: sqrt(80*80 + 80*80) ~= 113.2 N
+    #       # Upper bound on magnitude: sqrt(200*200 + 200*200 + 20*20) ~= 283.5 N
+    #       # Halved is (56.6-141.8) N
+    #       # Torques are (11.3-28.4) N*m
+    #       "force_range": (56.6,141.8),
+    #       "torque_range": (11.3,28.4),
+    #       # Durations copied from FACET paper "ramp impulse"
+    #       "duration_s": (0.2,0.3),
+    #       "cooldown_s": (0.2,0.3),
+    #       "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
+    #   }
+    # ),
     #
     # BRAVE force curriculum
     # "apply_force_to_robot": EventTermCfg(
