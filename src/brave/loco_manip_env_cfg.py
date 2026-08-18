@@ -245,12 +245,11 @@ def make_loco_manip_env_cfg() -> ManagerBasedRlEnvCfg:
         # in the Z direction. To roughly match this, we'll match the maximum possible
         # magnitude from these, which is sqrt(40*40 + 40*40 + 15*15) ~= 58.5 N
         # Apply around half of this magnitude via "force"
-        # "force_range":(0.0,29.25),
-        "force_range":(100.0,200.0),
+        "force_range":(0.0,100.25),
         # Apply around half of this magnitude via "torque"
         # Torque is in units of force * distance. In this case, expect the moment arm not to
         # exceed the length of the G1's upper arm link (~20cm). Torque is 29.25 N * 0.2m
-        "torque_range":(100.0,200.0),
+        "torque_range":(0.0,100.25 * 0.2),
         "asset_cfg": SceneEntityCfg("robot", body_names=("torso_link","pelvis","right_wrist_yaw_link", "left_wrist_yaw_link")),
       }
     ),
