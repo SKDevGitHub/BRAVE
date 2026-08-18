@@ -158,6 +158,9 @@ def unitree_g1_loco_manip_env_cfg(play: bool = False) -> ManagerBasedRlEnvCfg:
     weight=-1.0,
     params={"sensor_name": self_collision_cfg.name, "force_threshold": 10.0},
   )
+  
+  # remove terrain curriculum
+  cfg.curriculum.pop("terrain_levels", None)
 
   # Apply play mode overrides.
   if play:
