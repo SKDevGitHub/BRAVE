@@ -1,0 +1,3 @@
+[submodule "mjlab-brave"]
+	path = mjlab-brave
+	url = git@github.com:EliotTexK/mjlab-brave.git
